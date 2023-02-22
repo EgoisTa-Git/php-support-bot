@@ -15,6 +15,10 @@ class CustomUser(AbstractUser):
         choices=ROLES,
         blank=True,
     )
+    tg_id = models.IntegerField(
+        'ID в Telegram',
+        unique=True,
+    )
 
     class Meta:
         verbose_name = 'Пользователь'
