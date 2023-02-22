@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from support_bot.models import Tariff, Request
+from support_bot.models import Tariff, Request, Subscription
 
 admin.site.site_header = 'Сервис PHP Support'
 admin.site.site_title = 'PHP Support'
@@ -39,3 +39,16 @@ class RequestAdmin(admin.ModelAdmin):
     readonly_fields = (
         'created_at',
     )
+
+
+@admin.register(Subscription)
+class SubscriptionAdmin(admin.ModelAdmin):
+    raw_id_fields = (
+        'user',
+    )
+    list_display = [
+        'user',
+        'tariff',
+        'expire_at',
+        'requests_created',
+    ]
