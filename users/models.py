@@ -17,7 +17,7 @@ class CustomUser(AbstractUser):
     )
     tg_id = models.IntegerField(
         'ID в Telegram',
-        blank=True,
+        null=True,
     )
 
     class Meta:
