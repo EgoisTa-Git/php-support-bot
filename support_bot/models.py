@@ -66,14 +66,19 @@ class Request(models.Model):
         'Дата создания',
         auto_now_add=True,
     )
-    author = models.CharField(
-        'Автор - заглушка',
-        max_length=30,
+    author = models.ForeignKey(
+        'users.CustomUser',
+        related_name='requests_created',
+        verbose_name='Заказчик',
+        on_delete=models.CASCADE,
     )
-    freelancer = models.CharField(
-        'Фрилансер - заглушка',
-        max_length=30,
+    freelancer = models.ForeignKey(
+        'users.CustomUser',
+        related_name='requests_taken',
+        verbose_name='Фрилансер',
+        on_delete=models.SET_NULL,
         blank=True,
+        null=True,
     )
 
     class Meta:
