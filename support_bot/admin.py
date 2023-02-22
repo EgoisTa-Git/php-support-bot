@@ -29,15 +29,21 @@ class RequestAdmin(admin.ModelAdmin):
         'done',
     ]
     list_filter = [
-        'freelancer',
         'done',
+        'created_at',
     ]
     search_fields = [
         'title',
-        'author',
+        'author__username',
+        'author__first_name',
+        'author__last_name',
     ]
     readonly_fields = (
         'created_at',
+    )
+    raw_id_fields = (
+        'author',
+        'freelancer',
     )
 
 
