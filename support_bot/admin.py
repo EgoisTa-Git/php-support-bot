@@ -29,8 +29,8 @@ class RequestAdmin(admin.ModelAdmin):
         'done',
     ]
     list_filter = [
-        'freelancer',
         'done',
+        'created_at',
     ]
     search_fields = [
         'title',
