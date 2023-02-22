@@ -16,3 +16,8 @@ class CustomUserAdmin(UserAdmin):
         'username',
         'role',
     ]
+    list_filter = [
+        'role',
+        'is_staff',
+        'is_active',
+    ]

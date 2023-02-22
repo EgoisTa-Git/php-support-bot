@@ -39,6 +39,10 @@ class RequestAdmin(admin.ModelAdmin):
     readonly_fields = (
         'created_at',
     )
+    raw_id_fields = (
+        'author',
+        'freelancer',
+    )
 
 
 @admin.register(Subscription)
