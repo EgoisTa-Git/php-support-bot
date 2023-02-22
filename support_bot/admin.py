@@ -34,7 +34,9 @@ class RequestAdmin(admin.ModelAdmin):
     ]
     search_fields = [
         'title',
-        'author',
+        'author__username',
+        'author__first_name',
+        'author__last_name',
     ]
     readonly_fields = (
         'created_at',
