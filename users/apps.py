@@ -1,7 +1,7 @@
 from django.apps import AppConfig
 
 
-class SupportBotConfig(AppConfig):
+class UsersConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'support_bot'
-    verbose_name = 'PHP Support'
+    name = 'users'
+    verbose_name = 'Аккаунт'
