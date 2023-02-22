@@ -14,10 +14,45 @@ class CustomUserAdmin(UserAdmin):
     list_display = [
         'tg_id',
         'username',
+        'first_name',
+        'last_name',
         'role',
     ]
     list_filter = [
         'role',
-        'is_staff',
         'is_active',
     ]
+    add_fieldsets = (
+        (
+            None,
+            {
+                'fields': (
+                    'tg_id',
+                    'username',
+                    'role',
+                    'first_name',
+                    'last_name',
+                    'password1',
+                    'password2',
+                )
+            }
+        ),
+    )
+    fieldsets = (
+        (
+            None,
+            {
+                'fields': (
+                    'tg_id',
+                    'username',
+                    'role',
+                    'first_name',
+                    'last_name',
+                    'is_active',
+                    'is_staff',
+                    'is_superuser',
+                    'password',
+                )
+            }
+        ),
+    )
