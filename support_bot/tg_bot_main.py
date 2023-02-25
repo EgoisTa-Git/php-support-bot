@@ -1,5 +1,6 @@
 """Основной модуль ТГ бота"""
 
+from users.models import CustomUser
 from telegram import ReplyKeyboardMarkup
 from telegram.ext import Updater, CommandHandler
 
@@ -26,21 +27,30 @@ class TGBot(object):
         if user_reply == '/start':
             user_state = 'START'
         else:
-            user_state = User.objects.get(chat_id=chat_id).state  # TODO Написать queryset для получения стейта юзера по chat_id
+            user = CustomUser.objects.get(tg_id=chat_id)
+            user_state = user.bot_state
 
         state_handler = self.states_functions[user_state]
         next_state = state_handler(bot, update)
-        # TODO Реализовать сохранение стэйта пользователя
+        user.bot_state = next_state
+        user.save()
 
-    def start(bot, update):
-        """Метод вывода стартового диалога"""
-        chat_id = update.message.chat_id
+def start(bot, update):
+    """Метод вывода стартового диалога"""
+    chat_id = update.message.chat_id
+    try:
+        user = CustomUser.objects.get(tg_id=chat_id)
+        if user.role == 'client':
+            return 'HANDLE_CLIENT'
+        elif user.role == 'freelancer':
+            return 'HANDLE_FREELANCER'
+    except CustomUser.DoesNotExist:
         custom_keyboard = [['Заказчик', 'Фрилансер']]
         reply_markup = ReplyKeyboardMarkup(custom_keyboard)
 
         update.message.reply_text('Привет! Выберите свою роль.', reply_markup=reply_markup)
         return 'HANDLE_ROLE'
 
-    def handle_role(bot, update):
-        """Метод обработки выбора роли"""
+def handle_role(bot, update):
+    """Метод обработки выбора роли"""
         
