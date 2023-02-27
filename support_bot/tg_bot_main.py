@@ -33,11 +33,13 @@ class TGBot(object):
 
         if user_reply == '/start':
             user_state = user.bot_state if user.bot_state else 'START'
-            context.user_data.update({'chat_id': chat_id, 'username': username})
+        elif user_reply == 'Главное меню' and user.role == 'freelancer':
+            user_state = 'HANDLE_FRELANCER_REGISTER'
         else:
             user_state = user.bot_state
             user_state = user_state if user_state else 'START'
-            context.user_data.update({'chat_id': chat_id, 'username': username})
+
+        context.user_data.update({'chat_id': chat_id, 'username': username})
 
         state_handler = self.states_functions[user_state]
         next_state = state_handler(context.bot, update, context)

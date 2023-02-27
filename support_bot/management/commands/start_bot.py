@@ -1,5 +1,6 @@
 """Менеджмент команда запуска ТГ бота"""
-from support_bot.tg_frelance import handle_application_menu, handle_buy_subscribe, handle_freelancer_register
+from support_bot.tg_frelance import handle_application_menu, handle_buy_subscribe,\
+    handle_freelancer_register, handle_select_action, handle_select_order, handle_action_order
 from support_bot.tg_bot_main import TGBot, handle_role, start
 from django.conf import settings
 from django.core.management import BaseCommand
@@ -14,7 +15,10 @@ class Command(BaseCommand):
                     "HANDLE_ROLE": handle_role,
                     'HANDLE_APPLICATION_MENU': handle_application_menu,
                     'HANDLE_BUY_SUBSCRIBE': handle_buy_subscribe,
-                    'HANDLE_FRELANCER_REGISTER': handle_freelancer_register
+                    'HANDLE_FRELANCER_REGISTER': handle_freelancer_register,
+                    'HANDLER_SELECT_ACTION': handle_select_action,
+                    'HANDLE_SELECT_ORDER': handle_select_order,
+                    'HANDLE_ACTION_ORDER': handle_action_order
                 }
             )
             tg_bot.updater.start_polling()
