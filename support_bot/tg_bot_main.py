@@ -1,7 +1,7 @@
 """Основной модуль ТГ бота"""
 
 from telegram import ReplyKeyboardMarkup
-from telegram.ext import Updater, CommandHandler
+from telegram.ext import Updater, CommandHandler, ConversationHandler, MessageHandler, Filters
 
 
 class TGBot(object):
