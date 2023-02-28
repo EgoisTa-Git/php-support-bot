@@ -6,7 +6,7 @@ from users.models import CustomUser
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackQueryHandler
 from telegram.ext import ConversationHandler
-from support_bot.tg_customer import customer_selected_tariff, order_start
+from support_bot.tg_customer import customer_selected_tariff, handler_check_subscribe
 
 
 class TGBot(object):

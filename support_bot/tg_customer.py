@@ -53,7 +53,6 @@ def handler_check_subscribe(bot, update, context):
     chat_id = context.user_data['chat_id']
     user = context.user_data['user']
     active_subscribe = Subscription.objects.filter(user=user, expire_at__gte=datetime.datetime.now()).exists()
-    print(active_subscribe)
 
     if active_subscribe:
         bot.send_message(chat_id=chat_id, text='Добро пожаловать!')
@@ -79,7 +78,6 @@ def customer_selected_tariff(bot, update, context):
         return 'HANDLE_BUY_SUBSCRIBE'
     action_selected = update.callback_query.data
     user = context.user_data['user']
-    print(action_selected)
     context.user_data['action'] = action_selected
     if action_selected == 'client':
         reply_markup = get_tariff_keyboard()
@@ -113,7 +111,6 @@ def save_customer(bot, update, context):
     tariff_id = context.user_data['tariff_id']
     selected_tariff = Tariff.objects.get(id=int(tariff_id))
 
-    # chat_id = update.message.chat_id
     client = CustomUser.objects.get(tg_id=chat_id)
     subscription = Subscription.objects.create(
         user=client,
@@ -122,8 +119,6 @@ def save_customer(bot, update, context):
     )
     subscription.save()
 
-    # bot_state = handle_main_customer(bot, update, context)
-    # message_text = 'Для оплаты и активации подписки свяжитесь с менеджером {контакты менеджера}'
     message_text = 'Для оплаты и активации подписки свяжитесь с менеджером {контакты менеджера}'
     bot.send_message(chat_id=chat_id, text=message_text)
     return 'HANDLER_CHECK_SUBSCRIBE'
@@ -137,21 +132,41 @@ def back_tariffs(bot, update, context):
 # Создание заказа клиентом
 def action_customer(bot, update, context):
     chat_id = context.user_data['chat_id']
-    if update.callback_query.data == 'Разместить заказ':
-        message_text = 'Начнем создание заказа'
+    if isinstance(update.callback_query, type(None)):
+        return handler_check_subscribe(bot, update, context)
+    else:
+        if update.callback_query.data == 'Разместить заказ':
+            message_text = 'Начнем создание заказа'
+            bot.send_message(chat_id=chat_id, text=message_text)
+            return order_start(bot, update, context)
+        elif update.callback_query.data == 'Мои заказы':
+            return customes_show_orders(bot, update, context)
+
+
+def customes_show_orders(bot, update, context):
+    chat_id = context.user_data['chat_id']
+    customer_requests = Request.objects.filter(author__tg_id=chat_id, done=False)
+    
+    if len(customer_requests) != 0:
+        for request in customer_requests:
+            title = request.title
+            created_at = request.created_at
+            freelancer = 'Исполнитель еще не назначен'
+            if request.freelancer:
+                freelancer = request.freelancer
+            message_text = f'''Заявка: {title}
+Создана: {created_at}
+Исполнитель: {freelancer}
+'''
+            bot.send_message(chat_id=chat_id, text=message_text)
+    else:
+        message_text = 'У вас нет активных заявок'
         bot.send_message(chat_id=chat_id, text=message_text)
-        # state = 'ORDER_START'
-        return order_start(bot, update, context)
-    elif update.callback_query.data == 'Мои заказы':
-        return 'SHOW_ORDERS'
+    return handle_main_customer(bot, update, context)
 
 
 def order_start(bot, update, context):
     chat_id = context.user_data['chat_id']
-    # update.message.reply_text(
-    #     "Введите заголовок заказа",
-    #     reply_markup=ReplyKeyboardRemove()
-    # )
     message_text = 'Введите заголовок заказа'
     bot.send_message(chat_id=chat_id, text=message_text)
     return 'CUSTOMER_REG_ORDER_TITLE'
@@ -197,9 +212,6 @@ def order_description(bot, update, context):
         except:
             print('Шеф, всё пропало!')
         bot.send_message(chat_id=chat_id, text='Заказ размещен!')
-        # bot_state = handle_main_customer(bot, update, context)
-
-        # update.message.reply_text('Заказ размещен!')
         return handle_main_customer(bot, update, context)
 
 
