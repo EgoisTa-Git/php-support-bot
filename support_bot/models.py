@@ -1,4 +1,5 @@
 from datetime import timedelta
+import datetime
 
 from django.db import models
 from django.core.validators import MinValueValidator
@@ -118,3 +119,9 @@ class Subscription(models.Model):
 
     def __str__(self):
         return f'{self.tariff} - {self.user}'
+
+    def subscribe_is_not_expire(self):
+        """Проверяет, что подписка не истекла"""
+        if datetime.now() < self.expire_at:
+            return True
+        return False
