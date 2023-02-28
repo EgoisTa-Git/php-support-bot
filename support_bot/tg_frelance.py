@@ -43,6 +43,7 @@ def handle_select_action(bot, update, context):
         if not context.user_data.get('orders_chunk'):
             orders_query = Request.objects.filter(freelancer=None, done=False)
             orders_chunk = chunked(orders_query, 5)
+            context.user_data['orders_chunk'] = orders_chunk
         else:
             orders_chunk = context.user_data.get('orders_chunk')
         try:
@@ -53,10 +54,14 @@ def handle_select_action(bot, update, context):
     context.user_data['orders'] = orders
     new_bot_state = display_orders(bot, update, context)
     if action_selected == 'new_order':
-        custom_keyboard = [[InlineKeyboardButton('Еще', callback_data='more')]]
-        reply_markup = InlineKeyboardMarkup(custom_keyboard)
-        bot.send_message(chat_id=chat_id, text='Посмотреть другие заявки:', reply_markup=reply_markup)
+        display_more_button(bot, update, context)
     return new_bot_state
+
+def display_more_button(bot, update, context):
+    chat_id = context.user_data['chat_id']
+    custom_keyboard = [[InlineKeyboardButton('Еще', callback_data='more')]]
+    reply_markup = InlineKeyboardMarkup(custom_keyboard)
+    bot.send_message(chat_id=chat_id, text='Посмотреть другие заявки:', reply_markup=reply_markup)
 
 def display_orders(bot, update, context):
     chat_id = context.user_data['chat_id']
@@ -82,7 +87,12 @@ def handle_select_order(bot, update, context):
             context.user_data['orders'] = next(orders_chunk)
         except StopIteration:
             bot.send_message(chat_id=chat_id, text='Больше новых заказов нет')
-        return display_orders(bot, update, context)
+            context.user_data['orders'] = []
+            context.user_data['orders_chunk'] = []
+        bot_state = display_orders(bot, update, context)
+        if context.user_data['orders']:
+            display_more_button(bot, update, context)
+        return bot_state
     user = context.user_data['user']
     _, order_id = order_selected.split('=')
     order = Request.objects.get(pk=int(order_id), done=False)
