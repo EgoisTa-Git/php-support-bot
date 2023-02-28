@@ -6,6 +6,7 @@ from users.models import CustomUser
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackQueryHandler
 from telegram.ext import ConversationHandler
+from support_bot.tg_customer import customer_selected_tariff, handler_check_subscribe
 
 
 class TGBot(object):
@@ -85,9 +86,12 @@ def handle_role(bot, update, context):
         user.role = 'client'
         user.is_active = True
         user.save()
-        active_subscribe = Subscription.objects.filter(user=user, expire_at__gte=datetime.now()).exists()
+        active_subscribe = Subscription.objects.filter(user=user, expire_at__gte=datetime.datetime.now()).exists()
+        print(active_subscribe)
         if active_subscribe:
             return 'HANDLE_APPLICATION_MENU'
+        bot.send_message(chat_id=chat_id, text='Для начала работы необходимо пройти регистрацию')
+        customer_selected_tariff(bot, update, context)
         return 'HANDLE_BUY_SUBSCRIBE'
     elif role_selected == 'freelancer':
         user.role = 'freelancer'
